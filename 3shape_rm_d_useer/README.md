@@ -26,7 +26,6 @@ This script is designed to be run **locally on the 3Shape server** where the SQL
 
 - This script **permanently removes** users where `IsActive = 0` from the SQL database.
 - Make sure users are **deactivated properly first** — this does not disable them, it deletes them.
-- You run this, you own the result.
 
 ---
 
