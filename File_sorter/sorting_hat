@@ -1,0 +1,110 @@
+import os
+import shutil
+import time
+import re
+
+
+checkin_folder_path = "path/to/folder"
+source_folder_path = "path/to/folder"
+target_folder_path = "path/to/folder"
+sort_folder_path = "path/to/folder"
+print_folder_path = "path/to/folder"
+tissue_folder_path = "path/to/folder"
+model_folder_path = "path/to/folder"
+
+ # function to rename and move the file
+def rename_and_move_file(old_filename):
+    # split the old filename into basename and extension
+    basename, extension = os.path.splitext(old_filename)
+    # construct the new filename using the basename and extension
+    if os.path.isfile(os.path.join(source_folder_path, old_filename)):
+        # remove characters and anything in between brackets
+        new_filename = re.sub(r'\(.*?\)', '', old_filename).replace('()', '').replace('(', '').replace(')', '')
+        print(new_filename)
+        parts = new_filename.split("_")
+        print(parts)
+        if  len(parts) < 4:
+            # move the file to the Sort folder if it can't be handled by the code
+            shutil.move(os.path.join(source_folder_path, old_filename), os.path.join(sort_folder_path, old_filename))
+            print(f"{old_filename} moved to {sort_folder_path}")
+        else:
+            new_basename = f"{parts[0]}_{parts[1]}_{parts[3]}_{parts[2]}"
+            new_filename = new_basename + extension
+            new_file_path = os.path.join(source_folder_path, new_filename)
+            # rename the file
+            if os.path.exists(new_file_path):
+                os.replace(filename, os.path.join(source_folder_path, 'sort', new_filename))
+            else:
+                os.rename(os.path.join(source_folder_path, old_filename), os.path.join(source_folder_path, new_filename))
+                print(f"{old_filename} renamed to {new_filename}")
+                # move the file to the target folder
+                shutil.move(os.path.join(source_folder_path, new_filename), os.path.join(target_folder_path, new_filename))
+                print(f"{new_filename} moved to {target_folder_path}")
+
+
+try:
+    # Monitor the source folder for new files
+    while True:
+        try:
+            # Monitor the source folder for new files
+            for root, dirs, files in os.walk(checkin_folder_path):
+                for file in files:
+                    item_path = os.path.join(root, file)
+                    target_path = os.path.join(source_folder_path, file)
+                    if os.path.isfile(item_path):
+                        shutil.move(item_path, target_path)
+                        print(f"{file} moved to {target_folder_path}")
+                    if os.path.isdir(item_path):
+                        shutil.move(item_path, os.path.join(target_path, file))
+                        print(f"{file} moved to {target_folder_path}")
+                    # Get a list of all the directories in the checkin folder
+                    directories = [os.path.join(checkin_folder_path, d) for d in os.listdir(checkin_folder_path) if
+                                   os.path.isdir(os.path.join(checkin_folder_path, d))]
+
+                    # Iterate through the directories and delete empty ones
+                    for directory in directories:
+                        if not os.listdir(directory):
+                            os.rmdir(directory)
+                            print(f"{directory} deleted")
+
+            for filename in os.listdir(source_folder_path):
+                if "antag" in filename.lower() or "model" in filename.lower() or "tooth" in filename.lower() or "tissue" in filename.lower() or "solodie" in filename.lower():
+                    shutil.move(os.path.join(source_folder_path, filename), os.path.join(print_folder_path, filename))
+                    print(f"{filename} moved to {print_folder_path}")
+                if filename.endswith(".xml"):
+                    # Construct the full path to the file
+                    file_path = os.path.join(target_folder_path, filename)
+                    # These files aren't needed and can be deleted
+                    os.remove(file_path)
+                    print(f"{filename} deleted")
+                if "ImplantDirectionPosition_*" in filename:
+                    os.remove(os.path.join(source_folder_path, filename))
+                    print(f"{filename} deleted")
+                if "BottomScrewHole" in filename:
+                    os.remove(os.path.join(source_folder_path, filename))
+                    print(f"{filename} deleted")
+                if "TopScrewHole" in filename:
+                    os.remove(os.path.join(source_folder_path, filename))
+                    print(f"{filename} deleted")
+                if os.path.isfile(os.path.join(source_folder_path, filename)):
+                    rename_and_move_file(filename)
+                    print(f"{filename} moved to {target_folder_path}")
+
+            # Move tissue files to tissue folder
+            for filename in os.listdir(print_folder_path):
+                if "tissue" in filename.lower():
+                    shutil.move(os.path.join(print_folder_path, filename), os.path.join(tissue_folder_path, filename))
+                    print(f"{filename} moved to {tissue_folder_path}")
+
+            # Move Model files to Model folder
+            for filename in os.listdir(print_folder_path):
+                if "unsectioned" in filename.lower() or "antag" in filename.lower() or "tooth" in filename.lower() or "sectioned" in filename.lower():
+                    shutil.move(os.path.join(print_folder_path, filename), os.path.join(model_folder_path, filename))
+                    print(f"{filename} moved to {model_folder_path}")
+
+            time.sleep(1)  # Wait for 1 second before checking again
+        except Exception as e:
+            print(f"An error occurred: {e}")
+except KeyboardInterrupt:
+    print("Script terminated by user")
+
