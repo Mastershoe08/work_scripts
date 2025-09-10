@@ -1,0 +1,37 @@
+# ---- Python ----
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+env/
+*/.venv/
+*/venv/
+
+# ---- Logs ----
+*.log
+
+# ---- System files ----
+.DS_Store
+Thumbs.db
+
+# ---- IDE / Editor ----
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ---- Project specific ----
+# Ignore local builds / includes if generated
+script/include/
+script/lib/
+
+# Backup files
+*~
+# ---- Files ----
+dash_webpage.txt
+installer.360.sh
