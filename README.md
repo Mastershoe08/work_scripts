@@ -5,15 +5,16 @@ These are practical utilities used in a production environment direct, gritty, a
 
 ## Repo
 
-- **/3shape_rm_d_user**
+**/3shape_rm_d_user**
   - script to clean up disabled 3shape users from the SQL backend
 
--**/File_sorter**      
+**/File_sorter**      
   - filesorting for out milling team
-- **/Oqton**
+
+**/Oqton**
   - file renaming for the Oqton AI to autonest correctly
 
--**/dashboard**        
+**/dashboard**        
   - Dashboard Surfer Auto Clicker for Flutterflow apps 
 
 ## How to use
